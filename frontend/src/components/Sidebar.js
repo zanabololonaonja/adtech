@@ -8,9 +8,12 @@ export default function Sidebar() {
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const menu = [
+
+      { to: "/", icon: <FaList />, label: "Campagnes" },
+        { to: "/create", icon: <FaPlus />, label: "Créer" },
+
     { to: "/dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
-    { to: "/", icon: <FaList />, label: "Campagnes" },
-    { to: "/create", icon: <FaPlus />, label: "Créer" },
+  
   ];
 
   return (

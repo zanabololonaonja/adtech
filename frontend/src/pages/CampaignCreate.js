@@ -52,7 +52,7 @@ export default function CampaignCreate() {
   };
 
   return (
-    <div className="max-w-md mx-auto rounded-2xl shadow-lg bg-white overflow-hidden">
+    <div className="max-w-xl w-full mx-auto rounded-2xl shadow-lg bg-white overflow-hidden">
     
       <div className="bg-[#e3f2fa] px-6 py-6 text-center rounded-t-2xl">
         <h1 className="text-2xl font-bold mb-1 text-[#1a4a65]">Créer une campagne</h1>

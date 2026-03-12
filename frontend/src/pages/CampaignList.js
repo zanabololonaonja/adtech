@@ -28,7 +28,7 @@ export default function CampaignList() {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6 text-[#183153]">Liste des campagnes</h1>
+      <h1 className="text-2xl font-bold mb-6  text-white">Liste des campagnes</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full text-left">
           <thead>
