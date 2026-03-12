@@ -1,3 +1,23 @@
+body {
+  background: #e3f2fa;
+}
+/* Sidebar custom styles for dashboard look */
+.sidebar-shadow {
+  box-shadow: 2px 0 16px 0 rgba(24,49,83,0.15);
+}
+.sidebar-active {
+  background: #28416a;
+  color: #fff;
+  box-shadow: inset 4px 0 0 0 #22d3ee;
+}
+.sidebar-link {
+  color: #b0bedc;
+  transition: background 0.2s, color 0.2s;
+}
+.sidebar-link:hover {
+  background: #223a5f;
+  color: #fff;
+}
 .App {
   text-align: center;
 }
