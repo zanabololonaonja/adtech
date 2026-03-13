@@ -54,3 +54,38 @@ Le capping (limiter le nombre de fois qu'un utilisateur voit une pub) s'impléme
 - **Isolation des mises à jour** : Utilisation du `campaignId` lors de la simulation pour garantir que seule la campagne sélectionnée est impactée.
 - **Règle de Gestion** : Une impression coûte **10€**. Le système désactive automatiquement une campagne dès que son budget est insuffisant (< 10€).
 - **Observabilité** : Mise en place de logs au format JSON pour faciliter l'intégration future avec une stack ELK (Elasticsearch, Logstash, Kibana).
+
+
+
+
+## Instructions pour lancer le projet
+
+### 1. Cloner le projet
+
+git clone https://github.com/zanabololonaonja/adtech.git
+
+cd adtech-project
+
+### 2. Lancer le backend
+
+cd backend
+
+npm install
+
+npm run dev
+
+Le serveur démarre sur :
+http://localhost:3001
+
+### 3. Lancer le frontend
+
+Ouvrir un nouveau terminal :
+
+cd frontend
+
+npm install
+
+npm start
+
+L'application démarre sur :
+http://localhost:3000
