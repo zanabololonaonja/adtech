@@ -5,18 +5,17 @@ const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
 app.use(cors());
-app.use(express.json()); 
+app.use(express.json());
 
-const uri = process.env.MONGODB_URI ;
-const dbName = process.env.DB_NAME ;
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.DB_NAME;
 let db, campaigns;
 
 MongoClient.connect(uri)
   .then(async client => {
     db = client.db(dbName);
     campaigns = db.collection('campaigns');
-    
-    // Auto-migration: Convert strings to Dates and Numbers if necessary
+
     console.log('Connected to MongoDB. Running migrations...');
     const cursor = campaigns.find({
       $or: [
@@ -25,18 +24,17 @@ MongoClient.connect(uri)
         { budget: { $type: "string" } }
       ]
     });
-    
+
     let migratedCount = 0;
     while (await cursor.hasNext()) {
       const doc = await cursor.next();
-      const updates = { 
-        startDate: new Date(doc.startDate), 
+      const updates = {
+        startDate: new Date(doc.startDate),
         endDate: new Date(doc.endDate),
         budget: Number(doc.budget),
         impressionsServed: doc.impressionsServed || 0
       };
-      
-      // Ensure targetCountries is an array
+
       if (doc.targetCountries && !Array.isArray(doc.targetCountries)) {
         updates.targetCountries = doc.targetCountries.split(',').map(s => s.trim());
       }
@@ -53,22 +51,21 @@ MongoClient.connect(uri)
   })
   .catch(err => console.error('MongoDB connection error:', err));
 
-// Helper: get campaign status
+
 function getStatus(campaign) {
   const now = new Date();
   if (campaign.status === 'paused') return 'paused';
-  
+
   const start = new Date(campaign.startDate);
   const end = new Date(campaign.endDate);
-  
+
   if (now < start) return 'paused';
   if (now > end) return 'ended';
-  if (Number(campaign.budget) <= 0) return 'ended';
-  
+  if (Number(campaign.budget) < 10) return 'ended';
+
   return 'active';
 }
 
-// 1. POST /campaigns
 app.post('/campaigns', async (req, res) => {
   try {
     const { name, advertiser, startDate, endDate, budget, targetCountries } = req.body;
@@ -87,7 +84,7 @@ app.post('/campaigns', async (req, res) => {
       targetCountries: Array.isArray(targetCountries) ? targetCountries : [targetCountries]
     };
 
-    // calcul du statut réel pour stockage initial
+
     campaign.status = getStatus(campaign);
 
     const result = await campaigns.insertOne(campaign);
@@ -97,7 +94,7 @@ app.post('/campaigns', async (req, res) => {
     res.status(500).json({ error: 'Error creating campaign' });
   }
 });
-   
+
 
 // 2. GET /campaigns
 app.get('/campaigns', async (req, res) => {
@@ -119,50 +116,52 @@ app.get('/campaigns', async (req, res) => {
 
   // Filtrer par statut si demandé (car le statut est dynamique)
   if (status) {
-    campaignsWithStatus = campaignsWithStatus.filter(c => 
+    campaignsWithStatus = campaignsWithStatus.filter(c =>
       c.status.toLowerCase() === status.toLowerCase()
     );
   }
 
   res.json(campaignsWithStatus);
 });
-  
+
 app.post('/serve-ad', async (req, res) => {
   try {
-    const { country } = req.body;
-    if (!country) return res.status(400).json({ error: 'Country required' });
+    const { country, campaignId } = req.body;
+
 
     const now = new Date();
-
-    // On cherche une campagne éligible
-    // - Pas explicitement en pause
-    // - Dans les dates validées
-    // - Ciblant le pays
-    // - Avec du budget restant
-    const campaign = await campaigns.findOne({
+    const query = {
       status: { $ne: 'paused' },
       startDate: { $lte: now },
       endDate: { $gte: now },
-      targetCountries: country, // MongoDB match si country est dans le tableau targetCountries
-      budget: { $gt: 0 },
-    });
+      budget: { $gte: 10 },
+    };
 
-    if (!campaign) {
-      console.log(`No eligible campaign found for country: ${country} at ${now.toISOString()}`);
-      return res.status(404).json({ error: 'No eligible campaign' });
+    if (campaignId) {
+      query._id = new ObjectId(campaignId);
+    } else if (country) {
+      query.targetCountries = country;
+    } else {
+      return res.status(400).json({ error: 'Country or CampaignId required' });
     }
 
-    // Incrémenter les impressions et décrémenter le budget
+    const campaign = await campaigns.findOne(query);
+
+    if (!campaign) {
+      console.log(`No eligible campaign found for query: ${JSON.stringify(query)} at ${now.toISOString()}`);
+      return res.status(404).json({ error: 'No eligible campaign (insufficient budget or inactive)' });
+    }
+
     await campaigns.updateOne(
       { _id: campaign._id },
-      { $inc: { impressionsServed: 1, budget: -1 } }
+      { $inc: { impressionsServed: 1, budget: -10 } }
     );
 
     const updatedCampaign = await campaigns.findOne({ _id: campaign._id });
-    res.json({ 
-      ...updatedCampaign, 
-      id: updatedCampaign._id.toString(), 
-      status: getStatus(updatedCampaign) 
+    res.json({
+      ...updatedCampaign,
+      id: updatedCampaign._id.toString(),
+      status: getStatus(updatedCampaign)
     });
   } catch (err) {
     console.error(err);
@@ -200,4 +199,3 @@ app.patch('/campaigns/:id', async (req, res) => {
 });
 
 module.exports = app;
-    

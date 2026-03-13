@@ -5,7 +5,7 @@ export default function CampaignList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Récupérer les campagnes depuis le backend
+
   const fetchCampaigns = async () => {
     try {
       setLoading(true);
@@ -23,7 +23,7 @@ export default function CampaignList() {
     fetchCampaigns();
   }, []);
 
-  // Couleurs selon le statut
+
   const statusColors = {
     active: "bg-green-100 text-green-700",
     paused: "bg-yellow-100 text-yellow-700",
@@ -33,13 +33,13 @@ export default function CampaignList() {
     rejected: "bg-red-100 text-red-700",
   };
 
-  // Fonction pour simuler une impression
+
   const serveAd = async (country, campaignId) => {
     try {
       const res = await fetch("http://localhost:3001/serve-ad", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ country }),
+        body: JSON.stringify({ country, campaignId }),
       });
 
       if (!res.ok) {
@@ -50,7 +50,7 @@ export default function CampaignList() {
 
       const servedCampaign = await res.json();
 
-      // Mettre à jour le tableau avec la campagne mise à jour
+
       setCampaigns((prev) =>
         prev.map((c) => (c.id === servedCampaign.id ? servedCampaign : c))
       );
@@ -95,10 +95,9 @@ export default function CampaignList() {
                 <td className="px-6 py-4 text-[#3a5a6a]">{c.advertiser}</td>
                 <td className="px-6 py-4">
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${
-                      statusColors[c.status?.toLowerCase()] ||
+                    className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[c.status?.toLowerCase()] ||
                       "bg-gray-100 text-gray-500"
-                    }`}
+                      }`}
                   >
                     {c.status}
                   </span>
