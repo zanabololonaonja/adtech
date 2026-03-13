@@ -9,16 +9,15 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const menu = [
 
-      { to: "/", icon: <FaList />, label: "Campagnes" },
-        { to: "/create", icon: <FaPlus />, label: "Créer" },
-
+    { to: "/", icon: <FaList />, label: "Campagnes" },
+    { to: "/create", icon: <FaPlus />, label: "Créer" },
     { to: "/dashboard", icon: <FaTachometerAlt />, label: "Dashboard" },
-  
+
   ];
 
   return (
     <>
-    
+
       <button
         className="fixed top-4 left-4 z-30 bg-[#1a4a65] text-white p-2 rounded-lg shadow-lg focus:outline-none lg:left-72 transition-all"
         style={{ left: collapsed ? '4rem' : '16.5rem' }}
@@ -30,8 +29,8 @@ export default function Sidebar() {
       <aside className={`fixed left-0 top-0 h-full ${collapsed ? 'w-16' : 'w-64'} bg-[#add8e6] flex flex-col z-20 shadow-xl transition-all duration-300`}
         style={{ minWidth: collapsed ? '4rem' : '16rem' }}
       >
-      
-        <div className={`flex items-center justify-center h-16 mt-2`}> 
+
+        <div className={`flex items-center justify-center h-16 mt-2`}>
           <img
             src={collapsed ? process.env.PUBLIC_URL + '/logo512.png' : process.env.PUBLIC_URL + '/logo192.png'}
             alt="Logo"
@@ -39,7 +38,7 @@ export default function Sidebar() {
             style={{ objectFit: 'contain' }}
           />
         </div>
-        
+
         <nav className="flex-1 flex flex-col pt-4">
           {menu.map((item) => {
             const isActive = location.pathname === item.to;
@@ -52,7 +51,7 @@ export default function Sidebar() {
                 >
                   <span className="text-xl">{item.icon}</span>
                   {!collapsed && item.label}
-            
+
                   {isActive && !collapsed && (
                     <>
                       <div className="absolute -top-[20px] right-0 w-[20px] h-[20px] bg-transparent before:absolute before:inset-0 before:rounded-br-[20px] before:shadow-[5px_5px_0_5px_#1a4a65] before:content-['']"></div>
@@ -64,7 +63,7 @@ export default function Sidebar() {
             );
           })}
         </nav>
-        
+
         <div className={`mt-auto pb-10 ${collapsed ? 'pl-0 flex justify-center' : 'pl-10'}`}>
           <Link to="/settings" className={`flex items-center gap-3 text-[#1a4a65] font-bold hover:opacity-70 transition ${collapsed ? 'justify-center' : ''}`} title="Settings">
             <FaCog className="text-xl" />
