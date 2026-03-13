@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaChartBar, FaUsers, FaBullhorn, FaClock } from "react-icons/fa";
+import { FaChartBar, FaUsers, FaBullhorn } from "react-icons/fa";
 
 export default function Dashboard() {
   const [stats, setStats] = useState(null);
@@ -42,9 +42,9 @@ export default function Dashboard() {
         </div>
 
         <div className="bg-[#e3f2fa] rounded-2xl shadow-lg p-6 flex flex-col items-center">
-          <FaClock className="text-3xl text-[#1a4a65] mb-2" />
-          <div className="text-3xl font-bold text-[#1a4a65]">42 <span className="text-lg font-normal">min</span></div>
-          <div className="text-[#3a5a6a] font-semibold mt-1">ER Wait Time</div>
+          <FaBullhorn className="text-3xl text-[#1a4a65] mb-2" />
+          <div className="text-4xl font-bold text-[#1a4a65]">{stats.totalCampaigns}</div>
+          <div className="text-[#3a5a6a] font-semibold mt-1">Total campagnes</div>
         </div>
       </div>
     </div>
